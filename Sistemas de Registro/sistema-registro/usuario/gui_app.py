@@ -35,7 +35,7 @@ class Frame(tk.Frame):
 
         self.label_persona = tk.Label(self,text="Información Persona")       
         self.label_persona.config(font=("Arial", 12, 'bold'))
-        self.label_persona.grid(row=0, column=0, padx=10, pady=10)
+        self.label_persona.grid(row=0, column=0, padx=10, pady=10, columnspan=6)
 
         self.label_nombres = tk.Label(self,text="Nombres: ")
         self.label_nombres.config(font=("Arial", 9, 'bold', 'italic'))
@@ -97,3 +97,9 @@ class Frame(tk.Frame):
         self.entry_correo = tk.Entry(self)
         self.entry_correo.config(width=20, font=("Arial", 9))
         self.entry_correo.grid(row=5, column=3, padx=10, pady=5)
+
+        #Bonotes
+
+        self.btn_guardar = tk.Button(self, text="Guardar Registro")
+        self.btn_guardar.config(width=20, font=("Arial", 12, "bold"), cursor="hand2", activebackground="#35BD6F")
+        self.btn_guardar.grid(row = 7, column = 2, padx=10, pady=10)
