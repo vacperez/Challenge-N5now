@@ -10,10 +10,16 @@ def barra_menu(root):
     menu_inicio = tk.Menu(barra_menu, tearoff=0)
     barra_menu.add_cascade(label="Inicio", menu=menu_inicio)
 
-    menu_inicio.add_command(label="Crear Registro en BD")
-    menu_inicio.add_command(label="Eliminar Registro en BD")
-    menu_inicio.add_command(label="Buscar Registro en BD")
-    menu_inicio.add_command(label="Salir", command = root.destroy)
+    menu_eliminar = tk.Menu(barra_menu, tearoff=0)
+    barra_menu.add_cascade(label="Eliminar Registro en BD", menu=menu_eliminar)
+
+    menu_buscar = tk.Menu(barra_menu, tearoff=0)
+    barra_menu.add_cascade(label="Buscar Registro en BD", menu=menu_buscar)
+
+    menu_salir = tk.Menu(barra_menu, tearoff=0)
+    barra_menu.add_cascade(label="Salir", menu=menu_salir)
+    menu_salir.add_cascade(label="Salir", command=root.destroy)
+
 
 class Frame(tk.Frame):
     def __init__(self,root=None):
