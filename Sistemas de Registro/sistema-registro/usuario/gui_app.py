@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from model.registro_dao import crear_tabla, borrar_tabla
 
 def barra_menu(root):
     """Creamos la barra de menú y submenús"""
@@ -10,11 +11,9 @@ def barra_menu(root):
     menu_inicio = tk.Menu(barra_menu, tearoff=0)
     barra_menu.add_cascade(label="Inicio", menu=menu_inicio)
 
-    menu_eliminar = tk.Menu(barra_menu, tearoff=0)
-    barra_menu.add_cascade(label="Eliminar Registro en BD", menu=menu_eliminar)
+    menu_inicio.add_cascade(label="Crear Registro en DB", command=crear_tabla)
+    menu_inicio.add_cascade(label="Eliminar Registro en DB", command=borrar_tabla)
 
-    menu_buscar = tk.Menu(barra_menu, tearoff=0)
-    barra_menu.add_cascade(label="Buscar Registro en BD", menu=menu_buscar)
 
     menu_salir = tk.Menu(barra_menu, tearoff=0)
     barra_menu.add_cascade(label="Salir", menu=menu_salir)
