@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 from model.registro_dao import crear_tabla, borrar_tabla
+from model.registro_dao import Registro, guardar_registro, listar_registros, buscar_registro, editar_registro,eliminar_registro
 
 def barra_menu(root):
     """Creamos la barra de menú y submenús"""
@@ -29,6 +31,8 @@ class Frame(tk.Frame):
         self.campos_registro()
         self.deshabilitar_campos()
         self.tabla_registro()
+
+        self.id_registro = None
 
 
     def campos_registro(self):
@@ -143,6 +147,11 @@ class Frame(tk.Frame):
         self.entry_dni.config(state="disabled")
         self.btn_guardar.config(state="disabled")
         self.btn_cancelar.config(state="disabled")
+
+        self.limpiar_campos()
+        
+    
+    def limpiar_campos(self):
         self.string_nombres.set("")
         self.string_correo.set("")
         self.string_placa.set("")
@@ -151,27 +160,92 @@ class Frame(tk.Frame):
         self.string_oficial.set("")
         self.string_dni.set("")
 
+
     def guardar_registro(self):
-        nombre = self.string_nombres.get()
-        self.deshabilitar_campos()
-        print(nombre)
+        registro = Registro (
+            self.string_nombres.get(),
+            self.string_correo.get(),            
+            self.string_placa.get(),
+            self.string_modelo.get(),
+            self.string_color.get(),
+            self.string_oficial.get(),
+            self.string_dni.get()
+        )
+
+        if self.id_registro == None:
+            guardar_registro(registro)
+        else:
+            editar_registro(registro, self.id_registro)
+
+        self.tabla_registro()
+
+        self.deshabilitar_campos()       
     
     def tabla_registro(self):
+
+        # Recuperar registro
+        self.lista_registro = listar_registros()
+        self.lista_registro.reverse()
+
+
         self.tabla = ttk.Treeview(self, 
         columns=("Nombres", "Correo", "Placa"))
-        self.tabla.grid(row=9,column=0,columnspan=6)
+        self.tabla.grid(row=9,column=0,columnspan=6, sticky="nse")
+
+        #Scroll para la tabla si excede los 10 registros
+
+        self.scroll = ttk.Scrollbar(self,
+                                    orient= "vertical",
+                                    command= self.tabla.yview)
+        self.scroll.grid(row=9, column=7, sticky="nse")
+        self.tabla.configure(yscrollcommand=self.scroll.set)
 
         self.tabla.heading("#0", text="ID")
         self.tabla.heading("#1", text="NOMBRES")
         self.tabla.heading("#2", text="CORREO")
         self.tabla.heading("#3", text="PLACA")
 
-        self.tabla.insert("",0,text="1",values=("Juan","un@un.com","AGU578"))
+        #Insertar en la Tabla
+        for r in self.lista_registro:
+            self.tabla.insert("",0,text=r[0],values=(r[1],r[2],r[3]))
 
-        self.btn_editar = tk.Button(self, text="Editar Registro")
+        self.btn_editar = tk.Button(self, text="Editar Registro", command=self.editar_datos)
         self.btn_editar.config(width=20, font=("Arial", 12, "bold"), cursor="hand2", activebackground="#45BC68")
         self.btn_editar.grid(row = 10, column = 0, padx=10, pady=10, columnspan=3)
 
-        self.btn_eliminar = tk.Button(self, text="Eliminar Registro")
+        self.btn_eliminar = tk.Button(self, text="Eliminar Registro", command=self.eliminar_dato)
         self.btn_eliminar.config(width=20, font=("Arial", 12, "bold"), cursor="hand2", activebackground="#45BC68")
         self.btn_eliminar.grid(row = 10, column = 3, padx=10, pady=10, columnspan=3)
+
+    def editar_datos(self):
+        self.limpiar_campos()
+        try:
+            self.id_registro = self.tabla.item(self.tabla.selection())['text']
+            self.registro = buscar_registro(self.id_registro)
+
+            self.habilitar_campos()
+
+            self.entry_nombres.insert(0,self.registro[0][1])
+            self.entry_correo.insert(0,self.registro[0][2])
+            self.entry_placa.insert(0,self.registro[0][3])
+            self.entry_modelo.insert(0,self.registro[0][4])
+            self.entry_color.insert(0,self.registro[0][5])
+            self.entry_oficial.insert(0,self.registro[0][6])
+            self.entry_dni.insert(0,self.registro[0][7])
+
+        except:
+            title = "Editar Registro"
+            mensaje = "No ha seleccionado un registro"
+            messagebox.showerror(title=title,message=mensaje)
+    
+    def eliminar_dato(self):
+        try:
+            self.id_registro = self.tabla.item(self.tabla.selection())['text']
+            eliminar_registro(self.id_registro)
+            self.tabla_registro()
+            self.id_registro = None
+        except:
+            title = "Elimnar Registro"
+            mensaje = "No ha seleccionado un registro"
+            messagebox.showerror(title=title,message=mensaje)
+    

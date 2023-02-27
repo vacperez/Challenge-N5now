@@ -101,10 +101,10 @@ def editar_registro(registro, id_registro):
 
     sql = f"""UPDATE registro
     SET nombre_persona = '{registro.nombre_persona}', correo_persona = '{registro.correo_persona}', 
-        placa_vehiculo = '{registro.placa_vehiculo}',modelo_vehiculo = '{registro.modelo_vehiculo}'
-        color_vehiculo = '{registro.color_vehiculo}', nombre_oficial ='{registro.nombre_oficial}'
-        dni_oficial ='{ registro.dni_oficial}'
-        WHERE id_registro = '{id_registro}'
+        placa_vehiculo = '{registro.placa_vehiculo}',modelo_vehiculo = '{registro.modelo_vehiculo}',
+        color_vehiculo = '{registro.color_vehiculo}', nombre_oficial ='{registro.nombre_oficial}',
+        dni_oficial ='{registro.dni_oficial}'
+        WHERE id_registro = {id_registro}
     """
 
     try:
@@ -115,8 +115,38 @@ def editar_registro(registro, id_registro):
         mensaje = "No se pueden actualizar los datos"
         messagebox.showerror(title=title,message=mensaje)
 
-def buscar_registro(id_registro):
+def buscar_registro(id):
     conexion = ConexonDB()
     registro_buscado = []
 
-    sql = """SELECT * FROM registro WHERE id_registro = '{id_registro}'"""
+    sql = f"""SELECT * FROM registro 
+    WHERE id_registro = '{id}'
+    """
+
+    try:
+        conexion.cursor.execute(sql)
+        registro_buscado = conexion.cursor.fetchall()
+        conexion.cerrar_db()
+    except:
+        title = "Conexión Registro"
+        mensaje = "La tabla Registro no esta creada en la Base de Datos"
+        messagebox.showerror(title=title,message=mensaje)
+    
+    return registro_buscado
+
+def eliminar_registro(id_registro):
+    conexion = ConexonDB()
+    registro_buscado = []
+
+    sql = f"""DELETE FROM registro 
+    WHERE id_registro = '{id_registro}'
+    """
+
+    try:
+        conexion.cursor.execute(sql)
+        registro_buscado = conexion.cursor.fetchall()
+        conexion.cerrar_db()
+    except:
+        title = "Eliminar Registro"
+        mensaje = "No se pudo eliminar registro"
+        messagebox.showerror(title=title,message=mensaje)
